@@ -4,6 +4,8 @@ import { useState, useEffect, type ReactElement } from 'react';
 
 interface ImageCarouselProps {
   images: string[];
+  onImageClick?: (index: number) => void;
+  height?: string;
 }
 
 type CarouselDirection = -1 | 0 | 1;
@@ -21,7 +23,7 @@ const variants = {
   }),
 };
 
-export const ImageCarousel = ({ images }: ImageCarouselProps): ReactElement => {
+export const ImageCarousel = ({ images, onImageClick, height = 'h-64 md:h-80' }: ImageCarouselProps): ReactElement => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<CarouselDirection>(0);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -59,11 +61,11 @@ export const ImageCarousel = ({ images }: ImageCarouselProps): ReactElement => {
   };
 
   if (images.length === 0) {
-    return <div className="relative w-full h-64 md:h-80 bg-gray-200 rounded-2xl overflow-hidden mb-6 group" />;
+    return <div className={`relative w-full ${height} bg-gray-200 rounded-2xl overflow-hidden mb-6 group`} />;
   }
 
   return (
-    <div className="relative w-full h-64 md:h-80 bg-gray-200 rounded-2xl overflow-hidden mb-6 group">
+    <div className={`relative w-full ${height} bg-gray-200 rounded-2xl overflow-hidden mb-6 group`}>
       <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={index}
@@ -74,12 +76,13 @@ export const ImageCarousel = ({ images }: ImageCarouselProps): ReactElement => {
           animate="center"
           exit="exit"
           transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-          className="absolute w-full h-full object-contain"
+          className="absolute w-full h-full object-cover cursor-pointer"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.2}
           onDragStart={() => setIsInteracting(true)}
           onDragEnd={handleDragEnd}
+          onClick={() => !isInteracting && onImageClick?.(index)}
           style={{ touchAction: 'pan-y' }}
         />
       </AnimatePresence>

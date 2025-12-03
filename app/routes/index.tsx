@@ -2,8 +2,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Star } from 'lucide-react';
+import { useState } from 'react';
 
 import ChatWidget from '../components/ChatWidget';
+import { ImageCarousel } from '../components/ImageCarousel';
+import ImageModal from '../components/ImageModal';
 import LeafletMap from '../components/LeafletMap';
 import { KOST_DATA } from '../lib/kost.data';
 
@@ -12,21 +15,37 @@ export const Route = createFileRoute('/')({
 });
 
 function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImages, setModalImages] = useState<string[]>([]);
+  const [modalIndex, setModalIndex] = useState(0);
+
+  const openModal = (images: string[], startIndex: number) => {
+    setModalImages(images);
+    setModalIndex(startIndex);
+    setModalOpen(true);
+  };
+
+  const navigateModal = (direction: number) => {
+    setModalIndex((prev) => (prev + direction + modalImages.length) % modalImages.length);
+  };
+
   return (
     <div className="font-sans text-gray-800 bg-gray-50 min-h-screen">
-      {/* Hero Section */}
-      <header className="relative h-[60vh] flex items-center justify-center bg-gray-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30 z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=2000" 
-          alt="Kost Interior" 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="relative z-20 text-center px-4">
+      {/* Hero Section with Carousel */}
+      <header className="relative h-[70vh] flex items-center justify-center bg-gray-900 text-white overflow-hidden">
+        <div className="absolute inset-0 z-10">
+          <ImageCarousel 
+            images={KOST_DATA.heroImages} 
+            onImageClick={(index) => openModal(KOST_DATA.heroImages, index as number)}
+            height="h-full"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30 z-20" />
+        <div className="relative z-30 text-center px-4">
           <motion.h1 
             initial={{ y: 20, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
-            className="text-5xl md:text-7xl font-bold mb-4 tracking-tight"
+            className="text-5xl md:text-7xl font-bold mb-4 tracking-tight drop-shadow-lg"
           >
             {KOST_DATA.name}
           </motion.h1>
@@ -34,7 +53,7 @@ function Home() {
             initial={{ y: 20, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-200 font-light"
+            className="text-xl md:text-2xl text-gray-200 font-light drop-shadow-lg"
           >
             {KOST_DATA.tagline}
           </motion.p>
@@ -68,8 +87,12 @@ function Home() {
                 whileHover={{ y: -10 }}
                 className="bg-gray-50 rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex flex-col"
               >
-                <div className="h-48 overflow-hidden">
-                  <img src={room.image} alt={room.name} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                <div className="overflow-hidden">
+                  <ImageCarousel 
+                    images={room.images} 
+                    onImageClick={(index) => openModal(room.images, index as number)}
+                    height="h-48"
+                  />
                 </div>
                 <div className="p-6 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-4">
@@ -141,6 +164,15 @@ function Home() {
       </footer>
 
       <ChatWidget />
+      
+      {/* Image Modal */}
+      <ImageModal 
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        images={modalImages}
+        currentIndex={modalIndex}
+        onNavigate={navigateModal}
+      />
     </div>
   );
 }

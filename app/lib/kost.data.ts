@@ -1,9 +1,44 @@
 // app/lib/data.ts
 
-export const KOST_DATA = {
+interface Room {
+  id: string;
+  name: string;
+  price: string;
+  images: string[];
+  features: string[];
+  available: number;
+}
+
+interface KostData {
+  name: string;
+  tagline: string;
+  description: string;
+  heroImages: string[];
+  location: {
+    address: string;
+    lat: number;
+    lng: number;
+    mapZoom: number;
+  };
+  contact: {
+    whatsapp: string;
+    email: string;
+    instagram: string;
+  };
+  highlights: string[];
+  rooms: Room[];
+}
+
+export const KOST_DATA: KostData = {
   name: "Kost Citra & Tiara",
   tagline: "Comfortable & Secure Living for Undip Female Students",
   description: "Located just 5 minutes from Universitas Diponegoro, Kost Citra & Tiara offers a premium, female-only environment designed for academic success. Clean, modern, and fully managed.",
+  heroImages: [
+    "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=2000",
+    "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=2000"
+  ],
   location: {
     address: "Jl. Tembalang Selatan No. 12, Semarang, Jawa Tengah",
     lat: -7.0530, // Approx Tembalang coordinates
@@ -26,7 +61,11 @@ export const KOST_DATA = {
       id: "standard",
       name: "Citra Standard",
       price: "Rp 1.200.000 / month",
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600", // Placeholder
+      images: [
+        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=600"
+      ],
       features: ["Single Bed", "Shared Bathroom", "Study Desk", "Wardrobe", "Fan"],
       available: 3
     },
@@ -34,7 +73,11 @@ export const KOST_DATA = {
       id: "deluxe",
       name: "Tiara Deluxe",
       price: "Rp 1.800.000 / month",
-      image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&q=80&w=600",
+      images: [
+        "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1616047006789-b7af5afb8c20?auto=format&fit=crop&q=80&w=600"
+      ],
       features: ["Queen Bed", "Ensuite Bathroom", "AC", "Smart TV", "Water Heater"],
       available: 2
     },
@@ -42,7 +85,11 @@ export const KOST_DATA = {
       id: "vip",
       name: "Sultan VIP",
       price: "Rp 2.500.000 / month",
-      image: "https://images.unsplash.com/photo-1522771753033-6a586b911b18?auto=format&fit=crop&q=80&w=600",
+      images: [
+        "https://images.unsplash.com/photo-1522771753033-6a586b911b18?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1556020685-ae41abfc9365?auto=format&fit=crop&q=80&w=600"
+      ],
       features: ["King Bed", "Ensuite + Bathtub", "Private Balcony", "Fridge", "Netflix Included"],
       available: 1
     }
