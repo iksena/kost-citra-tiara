@@ -36,11 +36,11 @@ function Home() {
         <div className="absolute inset-0 z-10">
           <ImageCarousel 
             images={KOST_DATA.heroImages} 
-            onImageClick={(index) => openModal(KOST_DATA.heroImages, index as number)}
+            onImageClick={(index) => openModal(KOST_DATA.heroImages, index)}
             height="h-full"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30 z-20" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 to-black/30 z-20" />
         <div className="relative z-30 text-center px-4">
           <motion.h1 
             initial={{ y: 20, opacity: 0 }} 
@@ -90,7 +90,7 @@ function Home() {
                 <div className="overflow-hidden">
                   <ImageCarousel 
                     images={room.images} 
-                    onImageClick={(index) => openModal(room.images, index as number)}
+                    onImageClick={(index) => openModal(room.images, index)}
                     height="h-48"
                   />
                 </div>
