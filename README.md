@@ -1,290 +1,260 @@
-Welcome to your new TanStack app! 
+# Kost Citra & Tiara
 
-# Getting Started
+A modern full-stack web application for a boarding house (kost) featuring an AI-powered chat assistant. Built with TanStack technologies including React Router, React Start, and integrated with OpenRouter AI API.
 
-To run this application:
+## Features
+
+- **Responsive Design** - Mobile-first responsive layout with Tailwind CSS
+- **AI Chat Widget** - Real-time chat powered by OpenRouter AI models
+- **Image Carousel** - Beautiful image galleries with modal support
+- **Interactive Map** - Leaflet-based map for location visualization
+- **Type-Safe Configuration** - Centralized environment configuration with TypeScript support
+- **Server-Side Rendering** - Full-stack app with SSR capabilities via TanStack React Start
+
+## Project Structure
+
+```
+app/
+├── components/          # React components
+│   ├── ChatWidget.tsx   # AI chat interface
+│   ├── ImageCarousel.tsx
+│   ├── ImageModal.tsx
+│   └── LeafletMap.tsx
+├── config/
+│   ├── env.ts           # Centralized environment configuration
+│   └── env.examples.ts  # Usage examples
+├── lib/
+│   └── kost.data.ts     # Application data and constants
+├── routes/              # File-based routing
+│   ├── __root.tsx       # Root layout
+│   ├── index.tsx        # Home page
+│   └── api/
+│       └── chat.ts      # AI chat API endpoint
+├── utils/
+│   └── chat.ts          # Chat utilities
+└── styles/              # Global styles
+```
+
+## Prerequisites
+
+- [Bun](https://bun.sh/) (recommended) or Node.js 18+
+- OpenRouter API key from [https://openrouter.ai/keys](https://openrouter.ai/keys)
+
+## Getting Started
+
+### 1. Install Dependencies
 
 ```bash
 bun install
+```
+
+### 2. Configure Environment Variables
+
+Copy the example environment file and add your configuration:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and add your OpenRouter API key:
+
+```env
+OPENROUTER_API_KEY=your_api_key_here
+```
+
+### 3. Run Development Server
+
+```bash
 bun --bun run start
 ```
 
-# Building For Production
+The application will be available at `http://localhost:3000`
 
-To build this application for production:
+### 4. Build for Production
 
 ```bash
 bun --bun run build
 ```
 
+## Environment Configuration
+
+This project uses a centralized, type-safe environment configuration system located in `app/config/env.ts`.
+
+### Required Variables
+
+- **`OPENROUTER_API_KEY`** - Your OpenRouter API key from https://openrouter.ai/keys
+  - Required for all AI chat functionality
+
+### Optional Variables
+
+- **`SITE_URL`** - The URL where your application is hosted
+  - Default: `http://localhost:3000`
+  - Used for OpenRouter API headers
+
+- **`AI_MODEL`** - The AI model to use
+  - Default: `x-ai/grok-4.1-fast:free`
+  - Available models:
+    - `x-ai/grok-4.1-fast:free` - Fast, free Grok model
+    - `openai/gpt-4-turbo` - Advanced GPT-4
+    - `anthropic/claude-3-opus` - Claude 3 Opus
+
+- **`AI_MAX_TOKENS`** - Maximum tokens for AI responses
+  - Default: `512`
+  - Range: `1-4096`
+
+- **`AI_TEMPERATURE`** - Temperature for AI response creativity
+  - Default: `0.7`
+  - Range: `0-1`
+  - Lower values (0.0-0.3) = More deterministic
+  - Higher values (0.7-1.0) = More creative
+
+- **`CHAT_ENABLED`** - Enable/disable chat functionality
+  - Default: `true`
+
+- **`ANALYTICS_ENABLED`** - Enable/disable analytics
+  - Default: `false`
+
+### Usage in Code
+
+```typescript
+import { envConfig, getOpenRouterHeaders } from '@/config/env'
+
+// Access configuration
+const model = envConfig.ai.model
+const maxTokens = envConfig.ai.maxTokens
+
+// Get API headers for requests
+const headers = getOpenRouterHeaders()
+
+// Make API requests
+fetch(`${envConfig.openrouter.baseUrl}/chat/completions`, {
+  method: 'POST',
+  headers: getOpenRouterHeaders(),
+  body: JSON.stringify({
+    model: envConfig.ai.model,
+    messages: [...],
+    max_tokens: envConfig.ai.maxTokens,
+    temperature: envConfig.ai.temperature,
+  })
+})
+```
+
+### Configuration Structure
+
+```typescript
+interface EnvironmentConfig {
+  openrouter: {
+    apiKey: string
+    baseUrl: string  // 'https://openrouter.ai/api/v1'
+  }
+  
+  app: {
+    name: string     // 'Kost Citra & Tiara'
+    origin: string   // window.location.origin or localhost
+    siteUrl: string  // Full site URL for API headers
+  }
+  
+  ai: {
+    model: AIModel
+    maxTokens: number
+    temperature: number
+  }
+  
+  features: {
+    chatEnabled: boolean
+    analyticsEnabled: boolean
+  }
+}
+```
+
 ## Testing
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Run tests with:
 
 ```bash
 bun --bun run test
 ```
 
+This project uses [Vitest](https://vitest.dev/) for testing.
+
 ## Styling
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-
-
+This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. Tailwind configuration is automatic via `@tailwindcss/vite`.
 
 ## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
-### Adding A Route
+This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are defined as files in the `app/routes/` directory.
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+- Layout: `app/routes/__root.tsx`
+- Home page: `app/routes/index.tsx`
+- API routes: `app/routes/api/*.ts`
 
-TanStack will automatically generate the content of the route file for you.
+## API Endpoints
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+### POST /api/chat
 
-### Adding Links
+Send a message to the AI chat assistant.
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-bun install @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
+**Request:**
+```json
+{
+  "messages": [
+    { "role": "user", "content": "Hello!" }
+  ]
 }
 ```
 
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
+**Response:**
+```json
+{
+  "message": "AI response here"
 }
-
-export default App;
 ```
 
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
+## Troubleshooting
 
-## State Management
+### Missing API Key
 
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
+1. Ensure you have `.env.local` file in the root directory
+2. Copy `.env.example` as a starting point
+3. Add your OpenRouter API key from https://openrouter.ai/keys
+4. Restart your development server
 
-First you need to add TanStack Store as a dependency:
+### Changes not taking effect
 
-```bash
-bun install @tanstack/store
-```
+Environment variables are loaded at startup:
 
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
+1. Stop and restart your development server
+2. Clear your browser cache
+3. Check that the `.env.local` file is saved correctly
 
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
+### Chat not working
 
-const countStore = new Store(0);
+- Verify your OpenRouter API key is valid and has sufficient credits
+- Check that `CHAT_ENABLED=true` in your environment
+- Review the browser console and server logs for error messages
 
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
+## Technologies Used
 
-export default App;
-```
+- **Framework**: [React](https://react.dev/)
+- **Routing**: [TanStack Router](https://tanstack.com/router)
+- **Server**: [TanStack React Start](https://tanstack.com/react-start)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Package Manager**: [Bun](https://bun.sh/)
+- **Testing**: [Vitest](https://vitest.dev/)
+- **Maps**: [Leaflet](https://leafletjs.com/)
+- **AI API**: [OpenRouter](https://openrouter.ai/)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
+## Learn More
 
-Let's check this out by doubling the count using derived state.
+- [TanStack Documentation](https://tanstack.com)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [OpenRouter API](https://openrouter.ai/docs)
 
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
+## License
 
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+MIT
